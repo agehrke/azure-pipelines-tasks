@@ -7,13 +7,17 @@ import * as path from 'path';
 import * as UUID from 'uuid/v4';
 import {execSync} from 'child_process';
 
-export async function PublishCodeCoverage(inputFiles: string[], sourceDirectory?: string) {
-    var reportDirectory = path.join(getTempFolder(), UUID());
-    fs.mkdirSync(reportDirectory);
-    publishCoverage(inputFiles, reportDirectory, sourceDirectory)
+export async function PublishCodeCoverage(inputFiles: string[], sourceDirectory?: string, generateHtmlReport: boolean) {
+    if (generateHtmlReport) {
+        var reportDirectory = path.join(getTempFolder(), UUID());
+        fs.mkdirSync(reportDirectory);
+        publishCoverage(inputFiles, reportDirectory, sourceDirectory)
+    } else {
+        publishCoverage(inputFiles, null, sourceDirectory)
+    }
 }
 
-async function publishCoverage(inputFiles: string[], reportDirectory: string, pathToSources?: string) {
+async function publishCoverage(inputFiles: string[], reportDirectory?: string, pathToSources?: string) {
 
     if(!inputFiles || inputFiles.length == 0) {
         taskLib.setResult(taskLib.TaskResult.Failed, taskLib.loc("NoInputFiles"));
@@ -55,8 +59,11 @@ async function publishCoverage(inputFiles: string[], reportDirectory: string, pa
     for (const inputFile of inputFiles) {
         dotnet.arg(inputFile);
     }
-    dotnet.arg('--reportDirectory');
-    dotnet.arg(reportDirectory);
+
+    if(!isNullOrWhitespace(reportDirectory)) {
+        dotnet.arg('--reportDirectory');
+        dotnet.arg(reportDirectory);
+    }
 
     if(!isNullOrWhitespace(pathToSources)) {
         dotnet.arg('--sourceDirectory');

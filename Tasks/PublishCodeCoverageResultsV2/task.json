@@ -45,6 +45,14 @@
             "defaultValue": "false",
             "required": false,
             "helpMarkDown": "Fail the task if code coverage did not produce any results to publish."
+        },
+        {
+            "name": "disableHtmlReport",
+            "type": "boolean",
+            "label": "Disable generation of HTML coverage report",
+            "defaultValue": "false",
+            "required": false,
+            "helpMarkDown": "When enabled the task will not generate a HTML coverage report and upload as artifact."
         }
     ],
     "execution": {
